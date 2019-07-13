@@ -2,7 +2,8 @@ require('dotenv').config()
 const Web3 = require('web3');
 const IPFS = require('ipfs');
 const GALAXIA = require("./contracts/Galaxia.json");
-
+const TOKEN_URIS = require('./assets/asset-data.json');
+const NUM_PLANETS = TOKEN_URIS.keys.length;
 // Set network information
 const networkIDs = { 'ropsten': 3, 'rinkeby': 4 };
 const network = 'rinkeby';
@@ -29,6 +30,109 @@ console.log("ADDRESS ", galaxiaInstance.address);
 ipfs.once('ready', () => {
 
     console.log("IPFS node is ready ");
+    for (let i = 0; i < NUM_PLANETS; i++) {
+        const key = TOKEN_URIS.keys[i];
+        const planet = TOKEN_URIS[key];
+        // console.log("name ", key);
+        // console.log(" details ", planet);
+        if (planet.id !== i) {
+            console.log("Planet ID mismatch");
+            return false;
+        }
+        planet.metadata = planet.metadata.slice(5);
+        planet.image = planet.image.slice(5);
+        console.log(key, " metadata: ", planet.metadata);
+        console.log(key, " image ", planet.image);
+
+        ipfs.pin.ls(planet.metadata, (err, pinset) => {
+            if (err) {
+                // console.log(err);
+                ipfs.pin.add(planet.metadata, function (err) {
+                    if (err) {
+                        console.log(err, planet.metadata);
+                    }
+                    console.log("Pinned planet metadata ", planet.metadata);
+                });
+            }
+            if (pinset) {
+                console.log('planet metadata already pinned', pinset, planet.metadata);
+            }
+        });
+
+        ipfs.pin.ls(planet.image, (err, pinset) => {
+            if (err) {
+                // console.log(err);
+                ipfs.pin.add(planet.image, function (err) {
+                    if (err) {
+                        console.log(err, planet.image);
+                    }
+                    console.log("Pinnned planet image ", planet.image);
+                });
+            }
+            if (pinset) {
+                console.log('Planet image already pinned', pinset, planet.image);
+            }
+        })
+    }
+
+
+    galaxiaInstance.events.UpgradePathAdded({
+        filter: {},
+        fromBlock: 0
+    }, async (error, event) => {
+        if (error) console.log(error);
+        if (event) {
+            const fullHash = event.returnValues._newURI;
+            console.log("upgrade path added: full hash ", fullHash); 
+            if (typeof fullHash !== 'undefined' || fullHash !== "") {
+                const hash = fullHash.substring(5); // returns short path ipfs/Qm....
+                console.log("Upgrade Path Added: pinning hash ", hash);
+                ipfs.pin.ls(hash, (err, pinset) => {
+                    if (err) {
+                        console.log(err);
+                        ipfs.pin.add(hash, function (err) {
+                            if (err){
+                                console.log(err, hash);
+                            }
+                            console.log("pinned uri upgrade ", hash);
+                        });
+                    }
+                    if (pinset) {
+                        console.log('Hash already pinned', hash);
+                    }
+
+                })
+            }
+        }
+    });
+
+    galaxiaInstance.events.MetadataUpgraded({
+        filter: {},
+        fromBlock: 0
+    }, async (error, event) => {
+        if (error) console.log(error);
+        if (event) {
+            const fullHash = event.returnValues._newURI;
+            if (typeof fullHash !== 'undefined' || fullHash !== "") {
+                const hash = fullHash.substring(5);  // returns short path ipfs/Qm....
+                console.log("Metadata upgraded: pinning hash ", hash);
+                ipfs.pin.ls(hash, (err, pinset) => {
+                    if (err) {
+                        console.log('Pinning hash...', hash);
+                        ipfs.pin.add(hash, function (err) {
+                            if (err){
+                                console.log(err, hash);
+                            }
+                            console.log("pinned upgraded uri ", hash);
+                        });
+                    }
+                    if (pinset) {
+                        console.log('Hash already pinned', hash);
+                    }
+                })
+            }
+        }
+    });
 
     galaxiaInstance.getPastEvents('Transfer', {
         filter: {},
@@ -37,19 +141,23 @@ ipfs.once('ready', () => {
     }, (error, events) => {
         if (error) throw error;
         events.forEach(async (event) => {
-            console.log("EVENT VALUES ", event.returnValues);
+            // console.log("EVENT VALUES ", even    t.returnValues);
             const id = event.returnValues.tokenId;
             const fullHash = await galaxiaInstance.methods.tokenURI(id).call();
+            // const imageHash = 
             if (typeof fullHash !== 'undefined' || fullHash !== "") {
                 const hash = fullHash.substring(21);
-                console.log("PINNING SERVER IS PINNING HASH ", hash);
                 ipfs.pin.ls(hash, (err, pinset) => {
                     if (err) {
-                        ipfs.pin.add(hash);
-                        console.log('Pinned hash', hash);
+                        ipfs.pin.add(hash, function (err) {
+                            if (err){ 
+                            console.log(err, hash);
+                            }
+                            console.log("Successfullly pinned hash transfer() ", hash);
+                        });
                     }
                     if (pinset) {
-                        console.log('Hash already pinned', hash);
+                        console.log('Hash already pinned', pinset, hash);
                     }
                 });
             }
@@ -67,19 +175,25 @@ ipfs.once('ready', () => {
             const fullHash = await galaxiaInstance.methods.tokenURI(id).call();
             if (typeof fullHash !== 'undefined' || fullHash !== "") {
                 const hash = fullHash.substring(21);
-                console.log("PINNING SERVER IS PINNING HASH ", hash);
+                console.log("Transfer() pinning hash ", hash);
                 ipfs.pin.ls(hash, (err, pinset) => {
                     if (err) {
                         console.log('Pinning hash...', hash);
-                        ipfs.pin.add(hash);
+                        ipfs.pin.add(hash, function (err) {
+                            if (err){
+                                console.log(err, hash);
+                            }
+                            console.log("Pinned hash from transfer() ", hash);
+                        });
                     }
                     if (pinset) {
-                        console.log('Hash already pinned', hash);
+                        console.log('Hash already pinned', pinset, hash);
                     }
                 })
             }
         }
     });
+
 });
 
 
