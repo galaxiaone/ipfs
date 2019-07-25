@@ -38,20 +38,6 @@ let metadataFiles = [];
 
 // let assetData = JSON.stringify(TOKEN_URIS);
 let assetData = [];
-let numAssets = 0;
-
-const addToIPFS = (filePath) => {
-    const imageBuffer = Buffer.from(filePath);
-
-    ipfs.add(imageBuffer, { pin: true }, (err, result) => {
-        if (err) {
-            console.log(err);
-            return false;
-        }
-        // console.log("planet ", assetName, " hash ", result[0].hash);
-        const hash = result[0].hash;
-    });
-}
 
 // Get planet image files
 fs.readdir(GifDir, function (err, files) {
@@ -60,7 +46,6 @@ fs.readdir(GifDir, function (err, files) {
         process.exit(1);
     }
     gifFiles = files;
-    numAssets += files.length;
     // console.log(files);
 })
 
@@ -71,7 +56,6 @@ fs.readdir(MetaDir, function (err, files) {
         process.exit(1);
     }
     metadataFiles = files;
-    numAssets += files.length;
     // console.log(files);
 })
 
@@ -118,7 +102,7 @@ ipfs.once('ready', () => {
                     const jsonData = JSON.stringify(assetData); 
                     fs.writeFile(outputFile, jsonData, function(err) {
                         if(err) {
-                            return console.log(err);
+                             console.log(err);
                             process.exit(1);
                         }
                         console.log("The file was saved!");
@@ -128,67 +112,6 @@ ipfs.once('ready', () => {
         })
 
     }  // close for loop
-
-
-
-
-    // galaxiaInstance.events.UpgradePathAdded({
-    //     filter: {},
-    //     fromBlock: 0
-    // }, async (error, event) => {
-    //     if (error) console.log(error);
-    //     if (event) {
-    //         const fullHash = event.returnValues._newURI;
-    //         console.log("upgrade path added: full hash ", fullHash);
-    //         if (typeof fullHash !== 'undefined' || fullHash !== "") {
-    //             const hash = fullHash.substring(5); // returns short path ipfs/Qm....
-    //             console.log("Upgrade Path Added: pinning hash ", hash);
-    //             ipfs.pin.ls(hash, (err, pinset) => {
-    //                 if (err) {
-    //                     console.log(err);
-    //                     ipfs.pin.add(hash, function (err) {
-    //                         if (err) {
-    //                             console.log(err, hash);
-    //                         }
-    //                         console.log("pinned uri upgrade ", hash);
-    //                     });
-    //                 }
-    //                 if (pinset) {
-    //                     console.log('Hash already pinned', hash);
-    //                 }
-
-    //             })
-    //         }
-    //     }
-    // });
-
-    // galaxiaInstance.events.MetadataUpgraded({
-    //     filter: {},
-    //     fromBlock: 0
-    // }, async (error, event) => {
-    //     if (error) console.log(error);
-    //     if (event) {
-    //         const fullHash = event.returnValues._newURI;
-    //         if (typeof fullHash !== 'undefined' || fullHash !== "") {
-    //             const hash = fullHash.substring(5);  // returns short path ipfs/Qm....
-    //             console.log("Metadata upgraded: pinning hash ", hash);
-    //             ipfs.pin.ls(hash, (err, pinset) => {
-    //                 if (err) {
-    //                     console.log('Pinning hash...', hash);
-    //                     ipfs.pin.add(hash, function (err) {
-    //                         if (err) {
-    //                             console.log(err, hash);
-    //                         }
-    //                         console.log("pinned upgraded uri ", hash);
-    //                     });
-    //                 }
-    //                 if (pinset) {
-    //                     console.log('Hash already pinned', hash);
-    //                 }
-    //             })
-    //         }
-    //     }
-    // });
 
 });
 
