@@ -100,13 +100,13 @@ ipfs.once('ready', () => {
                 if (i === gifFiles.length -1){
                     console.log(assetData); 
                     const jsonData = JSON.stringify(assetData); 
-                    fs.writeFile(outputFile, jsonData, function(err) {
-                        if(err) {
-                             console.log(err);
-                            process.exit(1);
-                        }
-                        console.log("The file was saved!");
-                    }); 
+                    // fs.writeFile(outputFile, jsonData, function(err) {
+                    //     if(err) {
+                    //          console.log(err);
+                    //         process.exit(1);
+                    //     }
+                    //     console.log("The file was saved!");
+                    // }); 
                 }
             })
         })
