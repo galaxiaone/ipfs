@@ -85,7 +85,8 @@ ipfs.once('ready', () => {
                 console.log(err);
                 return false;
             }
-            console.log("planet ", assetName, " hash ", result[0].hash);
+            // console.log("planet ", assetName, " hash ", result[0].hash);
+            console.log("image buffer ", result); 
             data.imageHash = result[0].hash;
 
             ipfs.add(metadataBuffer, { pin: true }, (err, result) => {
@@ -93,7 +94,8 @@ ipfs.once('ready', () => {
                     console.log(err);
                     return false;
                 }
-                console.log("planet ", assetName, " hash ", result[0].hash);
+                // console.log("planet ", assetName, " hash ", result[0].hash);
+                console.log("metadata buffer ", result); 
                 data.metadata = result[0].hash;
                 // console.log(data);
                 assetData.push(data);
