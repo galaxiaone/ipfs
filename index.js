@@ -28,7 +28,7 @@ fs.readdir(GifDir, function (err, files) {
     // console.log(files);
 })
 
-// Get planet metadata files 
+// Get planet metadata files
 fs.readdir(MetaDir, function (err, files) {
     if (err) {
         console.log(err);
@@ -50,50 +50,61 @@ ipfs.once('ready', () => {
     for (let i = 0; i < gifFiles.length; i++) {
         const GIF = gifFiles[i];
         const Metadata = metadataFiles[i];
+        console.log(GIF)
         const assetName = GIF.slice(0, GIF.length - 4);
         const data = { id: "", imageHash: "", metadata: "" };
-        const gifLocation = GifDir + GIF;
-        const metadataLocation = METADATA_DIR + Metadata;
+        const gifLocation = `${GifDir}/${GIF}`;
+        const metadataLocation = `${METADATA_DIR}/${Metadata}`;
         console.log("planet name ", assetName);
         data.id = i;
         data.name = assetName;
-        const imageBuffer = Buffer.from(gifLocation);
-        const metadataBuffer = Buffer.from(metadataLocation);
-        ipfs.add(imageBuffer, { pin: true }, (err, result) => {
-            if (err) {
-                console.log(err);
-                return false;
-            }
-            // console.log("planet ", assetName, " hash ", result[0].hash);
-            console.log("image buffer ", result); 
-            data.imageHash = result[0].hash;
+
+        fs.readFile(gifLocation, (err, data) => {
+         if (err) throw err;
+         console.log(data);
+         const imageBuffer = Buffer.from(data);
+         console.log(imageBuffer)
+         ipfs.add(imageBuffer, { pin: true }, (err, result) => {
+           if (err) {
+               console.log(err);
+               return false;
+           }
+
+           // console.log("planet ", assetName, " hash ", result[0].hash);
+           console.log("image buffer ", result);
+           data.imageHash = result[0].hash;
+
+
+           fs.readFile(gifLocation, (err, data) => {
+            if (err) throw err;
+            console.log(data);
+            const metadataBuffer = Buffer.from(data);
+            console.log(metadataBuffer)
 
             ipfs.add(metadataBuffer, { pin: true }, (err, result) => {
-                if (err) {
-                    console.log(err);
-                    return false;
-                }
-                // console.log("planet ", assetName, " hash ", result[0].hash);
-                console.log("metadata buffer ", result); 
-                data.metadata = result[0].hash;
-                // console.log(data);
-                assetData.push(data);
-                if (i === gifFiles.length -1){
-                    console.log(assetData); 
-                    const jsonData = JSON.stringify(assetData); 
-                    // fs.writeFile(outputFile, jsonData, function(err) {
-                    //     if(err) {
-                    //          console.log(err);
-                    //         process.exit(1);
-                    //     }
-                    //     console.log("The file was saved!");
-                    // }); 
-                }
+              if (err) {
+                  console.log(err);
+                  return false;
+              }
+              // console.log("planet ", assetName, " hash ", result[0].hash);
+              console.log("metadata buffer ", result);
+              data.metadata = result[0].hash;
+              // console.log(data);
+              assetData.push(data);
+              if (i === gifFiles.length -1){
+                  console.log(assetData);
+                  const jsonData = JSON.stringify(assetData);
+                  // fs.writeFile(outputFile, jsonData, function(err) {
+                  //     if(err) {
+                  //          console.log(err);
+                  //         process.exit(1);
+                  //     }
+                  //     console.log("The file was saved!");
+                  // });
+              }
             })
+          })
         })
-
+      })
     }  // close for loop
-
 });
-
-
