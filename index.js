@@ -1,34 +1,14 @@
 require('dotenv').config()
 const fs = require('fs');
-const Web3 = require('web3');
 const IPFS = require('ipfs');
-const GALAXIA = require("./contracts/Galaxia.json");
-const TOKEN_URIS = require('./assets/asset-data.json');
 const IMAGES_DIR = "./assets/images/";
 const METADATA_DIR = "./assets/metadata/";
 const outputFile = "./assets/deployed-assets.json";
 
-// Set network information
-const networkIDs = { 'ropsten': 3, 'rinkeby': 4 };
-const network = 'rinkeby';
 
 // Initiate IPFS and Web3
 const ipfs = new IPFS();
-const web3Provider = "wss://" + network + ".infura.io/ws/v3/" + process.env.INFURA;
-const web3 = new Web3(new Web3.providers.WebsocketProvider(web3Provider));
 
-
-
-// Get ABI + Address on chosen network and connect to contract instance
-const networkID = networkIDs[network];
-const deployedNetwork = GALAXIA.networks[networkID];
-const contractAddress = process.env.CONTRACT_ADDRESS || deployedNetwork.address;
-const galaxiaInstance = new web3.eth.Contract(GALAXIA.abi, contractAddress);
-
-
-console.log("ADDRESS ", galaxiaInstance.address);
-// const baseURI = await galaxiaInstance.methods.baseTokenURI().call();
-// console.log("Base URI is ", baseURI);
 
 // ------------------Upload Images------------------------------
 const GifDir = IMAGES_DIR + 'v1';
@@ -36,7 +16,6 @@ const MetaDir = METADATA_DIR + 'v1';
 let gifFiles = [];
 let metadataFiles = [];
 
-// let assetData = JSON.stringify(TOKEN_URIS);
 let assetData = [];
 
 // Get planet image files
