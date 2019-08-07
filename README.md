@@ -1,15 +1,9 @@
-## Ethereum -> IPFS File Pinner 
-This docker container listens to Ethereum events and pins the file associated with the ipfs hash, avoiding it from being removed from the network after 24 hours. 
+## IPFS Node 
+This docker container starts up an IPFS node and reads the `assets` folder, adding all images and metadata to IPFS.
 
 ## How to use 
 
-First build contracts using `truffle migrate --reset --network=ropsten`  (Replace ropsten with whatever network you want the ipfs node to pin files from)
-
-Truffle migrations create a file in the build folder labeled <YourContractName>.json 
-
-To run the IPFS pinner, edit `index.js` to match your contract name, event logs and desired network. 
-
-Create a .env file with your Infura key. 
+Production: In your .env file add PRODUCTION=true to avoid outputing a json file (recursively restarts node due to file change);
 
 build the docker container and run:
 ```javascript 
@@ -17,4 +11,5 @@ sudo docker-compose build
 && 
 sudo docker-compose up
 ```
+
 

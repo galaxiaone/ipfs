@@ -33,7 +33,7 @@ function checkParity(image_files, metadata_files) {
 }
 
 
-
+// Reads image and metadata directories, pulls data buffers for each and adds each file buffer to ipfs
 ipfs.once('ready', async () => {
     try {
         const gifFiles = await getFileDir(IMAGES_DIR);
@@ -43,14 +43,20 @@ ipfs.once('ready', async () => {
         console.log("metadata files ", metadataFiles);
         console.log("IPFS node is ready ");
         // loop through planets
-        for (let i = 1; i <= gifFiles.length; i++) {
+        for (let i = 0; i < gifFiles.length; i++) {
             const GIF = gifFiles[i];
             const Metadata = metadataFiles[i];
             const assetName = GIF.slice(0, GIF.length - 4);
+            const nameCheck = Metadata.slice(0, Metadata.length - 5);
+            if (assetName !== nameCheck){
+                console.log("asset image/metadata mismatch. Check asset folder"); 
+                console.log("image ", assetName, " metadata: ", nameCheck);
+                process.exit(1);
+            }
             const data = { id: "", imageHash: "", metadata: "" };
             const gifLocation = `${IMAGES_DIR}/${GIF}`;
             const metadataLocation = `${METADATA_DIR}${Metadata}`;
-            data.id = i;
+            data.id = i + 1;
             data.name = assetName;
 
             // upload gif image
@@ -64,20 +70,23 @@ ipfs.once('ready', async () => {
             const metadata_buffer = Buffer.from(metadata_data);
             const ipfs_metadata = await ipfs.add(metadata_buffer);
             data.metadata = ipfs_metadata[0].hash;
-            // Add data to list
+            // Save data and go to next asset
             console.log(data.name, "image hash: ", data.imageHash, " metadata hash: ", data.metadata);
             assetData.push(data);
         }  // close for loop
 
-        console.log(assetData);
-        const jsonData = JSON.stringify(assetData);
-        fs.writeFile(outputFile, jsonData, function (err) {
-            if (err) {
-                console.log(err);
-                process.exit(1);
-            }
-            console.log("The file was saved!");
-        });
+        // console.log(assetData);
+        if (process.env.PRODUCTION === 'false'){
+            const jsonData = JSON.stringify(assetData);
+            fs.writeFile(outputFile, jsonData, function (err) {
+                if (err) {
+                    console.log(err);
+                    process.exit(1);
+                }
+                console.log("The file was saved!");
+            });
+        }
+
     } catch (err) {
         console.log(err);
         process.exit(1);
