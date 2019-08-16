@@ -34,7 +34,7 @@
   ], 
   "background_color": "000000",
   "description": "Mercury is the closest planet to the sun with surface temperature reaching a scorching 840 degrees Fahrenheit.", 
-  "external_url": "https://ipfs.io/ipfs/QmZBx2q651NebHd3rhf5pyEEMxVsBZPmJHCMtSD43SFPvo", 
-  "image": "https://ipfs.io/ipfs/QmZBx2q651NebHd3rhf5pyEEMxVsBZPmJHCMtSD43SFPvo", 
+  "external_url": "https://galaxia.one/", 
+  "image": "http://165.22.77.204:8080/ipfs/QmZBx2q651NebHd3rhf5pyEEMxVsBZPmJHCMtSD43SFPvo", 
   "name": "Mercury"
 }

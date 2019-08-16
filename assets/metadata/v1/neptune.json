@@ -34,7 +34,7 @@
   ], 
   "background_color": "000000",
   "description": "Neptune's atmosphere contains icy clouds and the fastest winds recorded in the solar system.", 
-  "external_url": "https://ipfs.io/ipfs/QmUZsFMKAW5aUFLnGMxE7yVPvqNVDvkyRM5rkrQUSoKDE1", 
-  "image": "https://ipfs.io/ipfs/QmUZsFMKAW5aUFLnGMxE7yVPvqNVDvkyRM5rkrQUSoKDE1", 
+  "external_url": "https://galaxia.one/", 
+  "image": "http://165.22.77.204:8080/ipfs/QmUZsFMKAW5aUFLnGMxE7yVPvqNVDvkyRM5rkrQUSoKDE1", 
   "name": "Neptune"
 }

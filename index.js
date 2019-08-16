@@ -36,12 +36,10 @@ function checkParity(image_files, metadata_files) {
 // Reads image and metadata directories, pulls data buffers for each and adds each file buffer to ipfs
 ipfs.once('ready', async () => {
     try {
+        console.log("IPFS node is ready ");
         const gifFiles = await getFileDir(IMAGES_DIR);
         const metadataFiles = await getFileDir(METADATA_DIR);
         checkParity(gifFiles, metadataFiles); 
-        console.log("gif files ", gifFiles);
-        console.log("metadata files ", metadataFiles);
-        console.log("IPFS node is ready ");
         // loop through planets
         for (let i = 0; i < gifFiles.length; i++) {
             const GIF = gifFiles[i];

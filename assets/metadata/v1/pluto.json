@@ -34,7 +34,7 @@
   ], 
   "background_color": "000000",
   "description": "Pluto is a dwarf planet that lies in the Kuiper Belt, an area full of icy bodies and other dwarf planets out past Neptune.", 
-  "external_url": "https://ipfs.io/ipfs/QmUPiYgVvV9ZWjHVAkcszGYJxyRtnDMdchBP61aYeHJdtw", 
-  "image": "https://ipfs.io/ipfs/QmUPiYgVvV9ZWjHVAkcszGYJxyRtnDMdchBP61aYeHJdtw", 
+  "external_url": "https://galaxia.one/", 
+  "image": "http://165.22.77.204:8080/ipfs/QmUPiYgVvV9ZWjHVAkcszGYJxyRtnDMdchBP61aYeHJdtw", 
   "name": "Pluto"
 }
